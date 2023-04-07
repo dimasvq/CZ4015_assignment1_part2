@@ -13,5 +13,5 @@ def interarrival_time_histogram(df, bins=50):
     plt.show()
 
 if __name__ == '__main__':
-    df = pd.read_excel('simulation_data.xlsx')
+    df = pd.read_excel('simulation_data.xls')
     interarrival_time_histogram(df)
