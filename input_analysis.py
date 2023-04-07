@@ -10,6 +10,8 @@ def interarrival_time_histogram(df, bins=50):
     plt.xlabel('Interarrival time (sec)')
     plt.ylabel('Frequency')
     plt.title('Histogram of interarrival time')
+    plt.xlim(0,9)
+    plt.savefig('figures/interarrival_time_histogram.png')
     plt.show()
 
 if __name__ == '__main__':
