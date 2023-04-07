@@ -24,27 +24,44 @@ def interarrival_time_histogram(df, bins=40, pdf=False):
     else:
         # Plot normalised histogram.
         sns.histplot(data=df, x='Interarrival time (sec)', bins=bins, stat='density')
-        # Calculate estimator for exponential distribution
+        # Calculate maximum likelihood estimator for exponential distribution
         x = np.linspace(0, xlim, 1000)
         estimator = df['Interarrival time (sec)'].mean()
         pdf = 1/estimator * np.exp(-x/estimator)
         # Plot estimated pdf
-        plt.plot(x,pdf,'r')
+        plt.plot(x,pdf,'r--')
         plt.savefig('figures/interarrival_time_pdf.png')
 
     plt.show()
 
 
-def base_station_histogram(df, pde=True):
+def base_station_histogram(df, bins=20, pdf=False):
     """Generates histogram for base stations where calls are generated"""
 
     sns.set(style='whitegrid')
-    sns.histplot(data=df, x='Base station ', bins=20)
+    plt.figure()
     plt.xlabel('Base station')
     plt.ylabel('Frequency')
     plt.title('Histogram of base stations')
-    plt.xlim(0,20.5)
-    plt.savefig('figures/base_station_histogram.png')
+    xlim = 21
+    plt.xlim(0,xlim)
+
+    if pdf is False:
+        sns.histplot(data=df, x='Base station ', bins=bins)
+        plt.savefig('figures/base_station_histogram.png')
+
+    else:
+        # Plot normalised histogram.
+        sns.histplot(data=df, x='Base station ', bins=bins, stat='density')
+        # Calculate maximum likelihood estimators a and b
+        estimator_a = df['Base station '].min()
+        estimator_b = df['Base station '].max()
+        pdf = np.full((1000,), 1/(estimator_b - estimator_a))
+        # Plot estimated pdf
+        x = np.linspace(0, xlim, 1000)
+        plt.plot(x,pdf,'r--')
+        plt.savefig('figures/base_station_pdf.png')
+
     plt.show()
 
 
@@ -77,6 +94,6 @@ def car_speed_histogram(df):
 if __name__ == '__main__':
     df = pd.read_excel('simulation_data.xls')
     interarrival_time_histogram(df,pdf=True)
-    # base_station_histogram(df)
+    base_station_histogram(df, pdf=True)
     # call_duration_histogram(df)
     # car_speed_histogram(df)
