@@ -10,27 +10,27 @@ def interarrival_time_histogram(df, bins=40, pdf=True):
     with estimated probability density function if pdf is set to True"""
 
     sns.set(style='whitegrid')
-    plt.figure()
+    plt.figure(figsize=(10,4))
+    plt.subplot(1,2,1)
+    sns.histplot(data=df, x='Interarrival time (sec)', bins=bins)
     plt.xlabel('Interarrival time (sec)')
     plt.ylabel('Frequency')
     xlim = 7.5
+    ylim = df['Interarrival time (sec)'].max()
+    plt.xlim(0,xlim)
+    plt.ylim(0,ylim)
+
+    plt.subplot(1,2,2)
+    sns.histplot(data=df, x='Interarrival time (sec)', bins=bins, stat='density')
+    x = np.linspace(0, xlim, 1000)
+    sample_mean = df['Interarrival time (sec)'].mean()
+    pdf = 1/sample_mean * np.exp(-x/sample_mean)
+    plt.plot(x,pdf,'r--')
+    plt.xlabel('Interarrival time (sec)')
+    plt.ylabel('Relative frequency (probability density)')
     plt.xlim(0,xlim)
 
-    if pdf is False:
-        # Plot histogram.
-        sns.histplot(data=df, x='Interarrival time (sec)', bins=bins)
-        plt.savefig('figures/interarrival_time_histogram.png')
-
-    else:
-        # Plot normalised histogram.
-        sns.histplot(data=df, x='Interarrival time (sec)', bins=bins, stat='density')
-        # Calculate maximum likelihood estimator for exponential distribution
-        x = np.linspace(0, xlim, 1000)
-        estimator = df['Interarrival time (sec)'].mean()
-        pdf = 1/estimator * np.exp(-x/estimator)
-        # Plot estimated pdf
-        plt.plot(x,pdf,'r--')
-        plt.savefig('figures/interarrival_time_pdf.png')
+    plt.savefig('figures/interarrival_time.png')
 
     plt.show()
 
@@ -129,6 +129,6 @@ def car_speed_histogram(df, bins=30, pdf=True):
 if __name__ == '__main__':
     df = pd.read_excel('simulation_data.xls')
     interarrival_time_histogram(df)
-    base_station_histogram(df)
-    call_duration_histogram(df)
-    car_speed_histogram(df)
+    # base_station_histogram(df)
+    # call_duration_histogram(df)
+    # car_speed_histogram(df)
