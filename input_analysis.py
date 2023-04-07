@@ -42,8 +42,22 @@ def call_duration_histogram(df):
     plt.show()
 
 
+def car_speed_histogram(df):
+    """Generates histogram for car speed"""
+
+    sns.set(style='whitegrid')
+    sns.histplot(data=df, x='velocity (km/h)', bins=30)
+    plt.xlabel('Car speed')
+    plt.ylabel('Frequency')
+    plt.title('Histogram of car speed')
+    plt.xlim(90,152)
+    plt.savefig('figures/car_speed_histogram.png')
+    plt.show()
+
+
 if __name__ == '__main__':
     df = pd.read_excel('simulation_data.xls')
     # interarrival_time_histogram(df)
     # base_station_histogram(df)
-    call_duration_histogram(df)
+    # call_duration_histogram(df)
+    car_speed_histogram(df)
