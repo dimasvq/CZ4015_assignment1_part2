@@ -29,7 +29,21 @@ def base_station_histogram(df):
     plt.show()
 
 
+def call_duration_histogram(df):
+    """Generates histogram for call duration"""
+
+    sns.set(style='whitegrid')
+    sns.histplot(data=df, x='Call duration (sec)', bins=40)
+    plt.xlabel('Call duration')
+    plt.ylabel('Frequency')
+    plt.title('Histogram of call duration')
+    plt.xlim(0,600)
+    plt.savefig('figures/call_duration_histogram.png')
+    plt.show()
+
+
 if __name__ == '__main__':
     df = pd.read_excel('simulation_data.xls')
-    interarrival_time_histogram(df)
-    base_station_histogram(df)
+    # interarrival_time_histogram(df)
+    # base_station_histogram(df)
+    call_duration_histogram(df)
