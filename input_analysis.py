@@ -11,3 +11,7 @@ def interarrival_time_histogram(df, bins=50):
     plt.ylabel('Frequency')
     plt.title('Histogram of interarrival time')
     plt.show()
+
+if __name__ == '__main__':
+    df = pd.read_excel('simulation_data.xlsx')
+    interarrival_time_histogram(df)
