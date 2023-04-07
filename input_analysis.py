@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 from scipy.stats import norm
 
 
-def interarrival_time_histogram(df, bins=40, pdf=False):
+def interarrival_time_histogram(df, bins=40, pdf=True):
     """Generates histogram for intearrival times, or normalised histogram
     with estimated probability density function if pdf is set to True"""
 
@@ -13,7 +13,6 @@ def interarrival_time_histogram(df, bins=40, pdf=False):
     plt.figure()
     plt.xlabel('Interarrival time (sec)')
     plt.ylabel('Frequency')
-    plt.title('Histogram of interarrival time')
     xlim = 7.5
     plt.xlim(0,xlim)
 
@@ -36,14 +35,14 @@ def interarrival_time_histogram(df, bins=40, pdf=False):
     plt.show()
 
 
-def base_station_histogram(df, bins=20, pdf=False):
-    """Generates histogram for base stations where calls are generated"""
+def base_station_histogram(df, bins=20, pdf=True):
+    """Generates histogram for base station, or normalised histogram
+    with estimated probability density function if pdf is set to True"""
 
     sns.set(style='whitegrid')
     plt.figure()
     plt.xlabel('Base station')
     plt.ylabel('Frequency')
-    plt.title('Histogram of base stations')
     xlim = 21
     plt.xlim(0,xlim)
 
@@ -66,14 +65,14 @@ def base_station_histogram(df, bins=20, pdf=False):
     plt.show()
 
 
-def call_duration_histogram(df, bins=40, pdf=False):
-    """Generates histogram for call duration"""
+def call_duration_histogram(df, bins=40, pdf=True):
+    """Generates histogram for call duration, or normalised histogram
+    with estimated probability density function if pdf is set to True"""
 
     sns.set(style='whitegrid')
     plt.figure()
     plt.xlabel('Call duration')
     plt.ylabel('Frequency')
-    plt.title('Histogram of call duration')
     xlim = 550
     plt.xlim(0, xlim)
 
@@ -96,14 +95,14 @@ def call_duration_histogram(df, bins=40, pdf=False):
     plt.show()
 
 
-def car_speed_histogram(df, bins=30, pdf=False):
-    """Generates histogram for car speed"""
+def car_speed_histogram(df, bins=30, pdf=True):
+    """Generates histogram for car speed, or normalised histogram
+    with estimated probability density function if pdf is set to True"""
 
     sns.set(style='whitegrid')
     plt.figure()
     plt.xlabel('Car speed')
     plt.ylabel('Frequency')
-    plt.title('Histogram of car speed')
     xlim_min = 90
     xlim_max = 152
     plt.xlim(xlim_min, xlim_max)
@@ -129,7 +128,7 @@ def car_speed_histogram(df, bins=30, pdf=False):
 
 if __name__ == '__main__':
     df = pd.read_excel('simulation_data.xls')
-    interarrival_time_histogram(df,pdf=True)
-    base_station_histogram(df, pdf=True)
-    call_duration_histogram(df, pdf=True)
-    car_speed_histogram(df, pdf=True)
+    interarrival_time_histogram(df)
+    base_station_histogram(df)
+    call_duration_histogram(df)
+    car_speed_histogram(df)
