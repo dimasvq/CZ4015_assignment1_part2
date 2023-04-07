@@ -136,7 +136,3 @@ if __name__ == '__main__':
     base_station_histogram(df)
     call_duration_histogram(df)
     car_speed_histogram(df)
-    interarrival_time_histogram(df, pdf=False)
-    base_station_histogram(df, pdf=False)
-    call_duration_histogram(df, pdf=False)
-    car_speed_histogram(df, pdf=False)
