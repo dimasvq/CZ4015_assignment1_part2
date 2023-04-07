@@ -10,25 +10,10 @@ def interarrival_time_histogram(df, bins=40, pdf=True):
     with estimated probability density function if pdf is set to True"""
 
     sns.set(style='whitegrid')
-    plt.figure(figsize=(10,4))
-    plt.subplot(1,2,1)
-    sns.histplot(data=df, x='Interarrival time (sec)', bins=bins)
+    plt.figure()
     plt.xlabel('Interarrival time (sec)')
     xlim = 7.5
-    ylim = df['Interarrival time (sec)'].max()
     plt.xlim(0,xlim)
-    plt.ylim(0,ylim)
-
-    plt.subplot(1,2,2)
-    sns.histplot(data=df, x='Interarrival time (sec)', bins=bins, stat='density')
-    x = np.linspace(0, xlim, 1000)
-    sample_mean = df['Interarrival time (sec)'].mean()
-    pdf = 1/sample_mean * np.exp(-x/sample_mean)
-    plt.plot(x,pdf,'r--')
-    plt.xlabel('Interarrival time (sec)')
-    plt.ylabel('Relative frequency (probability density)')
-    plt.xlim(0,xlim)
-
 
     if pdf is False:
         # Plot histogram.
@@ -39,7 +24,7 @@ def interarrival_time_histogram(df, bins=40, pdf=True):
     else:
         # Plot normalised histogram.
         sns.histplot(data=df, x='Interarrival time (sec)', bins=bins, stat='density')
-        # Calculate maximum likelihood estimator for exponential distribution
+        # Calculate maximum likelihood estimator for exponential distribution
         x = np.linspace(0, xlim, 1000)
         estimator = df['Interarrival time (sec)'].mean()
         pdf = 1/estimator * np.exp(-x/estimator)
@@ -101,7 +86,7 @@ def call_duration_histogram(df, bins=40, pdf=True):
     else:
         # Plot normalised histogram.
         sns.histplot(data=df, x='Call duration (sec)', bins=bins, stat='density')
-        # Calculate maximum likelihood estimator for exponential distribution
+        # Calculate maximum likelihood estimator for exponential distribution
         x = np.linspace(0, xlim, 1000)
         estimator = df['Call duration (sec)'].mean()
         pdf = 1/estimator * np.exp(-x/estimator)
@@ -132,7 +117,7 @@ def car_speed_histogram(df, bins=30, pdf=True):
     
     else:
         sns.histplot(data=df, x='velocity (km/h)', bins=bins,stat='density')
-        # Calculate maximum likelihood estimators for normal distribution
+        # Calculate maximum likelihood estimators for normal distribution
         x = np.linspace(xlim_min, xlim_max, 1000)
         sample_mean = df['velocity (km/h)'].mean()
         sample_stdev = df['velocity (km/h)'].std(ddof=1)
@@ -154,5 +139,4 @@ if __name__ == '__main__':
     interarrival_time_histogram(df, pdf=False)
     base_station_histogram(df, pdf=False)
     call_duration_histogram(df, pdf=False)
-    car_speed_histogram(df, pdf=False
-                        )
+    car_speed_histogram(df, pdf=False)
