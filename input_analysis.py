@@ -10,10 +10,25 @@ def interarrival_time_histogram(df, bins=40, pdf=True):
     with estimated probability density function if pdf is set to True"""
 
     sns.set(style='whitegrid')
-    plt.figure()
+    plt.figure(figsize=(10,4))
+    plt.subplot(1,2,1)
+    sns.histplot(data=df, x='Interarrival time (sec)', bins=bins)
     plt.xlabel('Interarrival time (sec)')
     xlim = 7.5
+    ylim = df['Interarrival time (sec)'].max()
     plt.xlim(0,xlim)
+    plt.ylim(0,ylim)
+
+    plt.subplot(1,2,2)
+    sns.histplot(data=df, x='Interarrival time (sec)', bins=bins, stat='density')
+    x = np.linspace(0, xlim, 1000)
+    sample_mean = df['Interarrival time (sec)'].mean()
+    pdf = 1/sample_mean * np.exp(-x/sample_mean)
+    plt.plot(x,pdf,'r--')
+    plt.xlabel('Interarrival time (sec)')
+    plt.ylabel('Relative frequency (probability density)')
+    plt.xlim(0,xlim)
+
 
     if pdf is False:
         # Plot histogram.
