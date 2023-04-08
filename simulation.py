@@ -3,7 +3,9 @@ from numpy.random import exponential, randint, normal, uniform, choice
 from heapq import heappush, heappop
 
 
+
 class simulation():
+
     def __init__(self):
 
         # Initialise state variables.
@@ -14,9 +16,7 @@ class simulation():
         # Initialise statistical counters.
         self.blocked = 0
         self.dropped = 0
-        self.total_calls = -1
-        # The first call initiation event isn't a real one,
-        # it just initialises the simulation
+        self.total_calls = 0
 
         # Maximum likelihood estimators for probability distributions
         self.df = pd.read_excel('simulation_data.xls')
@@ -25,35 +25,23 @@ class simulation():
         self.duration_mean = self.df['Call duration (sec)'].mean()
         self.speed_mean = self.df['velocity (km/h)'].mean()
         self.speed_std = self.df['velocity (km/h)'].std(ddof=1)
-    
-
-    def run(self, N):
-        """Run simulation.
-
-        Parameters
-        ==========
-        N: int
-            Number of iterations to run the simulation.
-        """
-        
-        event(0, 0, 0, 0, 0, 0, 1).schedule(self.FEL)
-                        # time, event_type, station, duration, speed, position, direction
-        for n in range(N):
-
-            event = heappop(self.FEL)
-            self.clock += event.time
-
-            if event.event_type == 0:
-                self.call_initiation_event(event)
-
-            elif event.event_type == 1:
-                self.call_handover_event(event)
-            
-            elif event.event_type == 2:
-                self.call_termination_event(event)
 
 
-    def call_initiation_event(self, event):
+    def new_call_initiation(self):
+        """Create new call initiation event."""
+
+        event_type = 0
+        station = randint(self.station_min, self.station_max)
+        duration = exponential(self.duration_mean)
+        speed = normal(self.speed_mean, self.speed_std)
+        position = uniform(low=0, high=2) # car position within cell
+        direction = choice([-1,1])
+        time = self.clock + exponential(self.interarrival_mean)
+        return event(time, event_type, station, duration,
+                     speed, position, direction)
+
+
+    def call_initiation_handler(self, event):
         """Call initiation event handler."""
 
         # Update state variables and counters and schedule subsequent events
@@ -82,21 +70,11 @@ class simulation():
                 event.duration -= time_in_station
                 event.time = self.clock + time_in_station
 
-
-        # Generate new random variables and schedule next call initiation event
-        event_type = 0
-        station = randint(self.station_min, self.station_max)
-        duration = exponential(self.duration_mean)
-        speed = normal(self.speed_mean, self.speed_std)
-        position = uniform(low=0, high=2) # car position within cell
-        direction = choice([-1,1])
-        time = self.clock + exponential(self.interarrival_mean)
-        event(
-            time, event_type, station, duration, speed, position, direction
-            ).schedule(self.FEL)
+        # Schedule new call initiation event.
+        self.new_call_initiation().schedule(self.FEL)
 
 
-    def call_handover_event(self, event):
+    def call_handover_handler(self, event):
         """Call handover event handler."""
 
         self.free_channels[event.station] += 1
@@ -127,13 +105,46 @@ class simulation():
                     event.schedule(self.FEL) # new handover event
 
 
-    def call_termination_event(self, event):
+    def call_termination_handler(self, event):
         """Call termination event handler."""
 
         self.free_channels[event.station] += 1
+    
+
+    def run(self, N):
+        """Run simulation.
+
+        Parameters
+        ==========
+        N: int
+            Number of iterations to run the simulation.
+        """
+
+        # Initialise simulation with first call initiation event.
+        self.new_call_initiation().schedule(self.FEL)
+                        
+        for n in range(N):
+
+            event = heappop(self.FEL)
+            self.clock += event.time
+
+            if event.event_type == 0:
+                self.call_initiation_handler(event)
+
+            elif event.event_type == 1:
+                self.call_handover_handler(event)
+            
+            elif event.event_type == 2:
+                self.call_termination_handler(event)
+        
+        print('Blocked calls: {}', [self.blocked])
+        print('Dropped calls: {}', [self.dropped])
+        print('Total calls: {}', [self.total_calls])
+
 
 
 class event():
+
     def __init__(self, time, event_type, station, duration, speed, position, direction):
         self.time = time
         self.event_type = event_type
@@ -143,9 +154,12 @@ class event():
         self.position = position
         self.direction = direction
     
+
     def schedule(self, FEL):
         heappush(FEL, (self.time, self))
 
 
+
 if __name__ == "__main__":
-    sim = simulation()
+    N = 100
+    simulation().run(N)
