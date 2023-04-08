@@ -59,7 +59,6 @@ class simulation():
                 event.time = self.clock + time_in_station
 
 
-
         # Generate new random variables and schedule next call initiation event
         event_type = 0
         station = randint(self.station_min, self.station_max)
@@ -71,6 +70,12 @@ class simulation():
         event(
             time, event_type, station, duration, speed, position, direction
             ).schedule(self.FEL)
+
+
+    def call_termination_event(self, event):
+        """Call termination event handler."""
+
+        self.free_channels[event.station] += 1
 
 
 class event():
