@@ -25,7 +25,8 @@ class simulation():
 
 
     def call_initiation_event(self, event):
-        """Initiation event handler."""
+        """Call initiation event handler."""
+
         # event_type, station, duration, speed, position, direction = event
         self.total_calls += 1
 
@@ -40,7 +41,7 @@ class simulation():
         time = self.clock + exponential(self.interarrival_mean)
         event(
             time, event_type, station, duration, speed, position, direction
-            ).add_to_FEL(self.FEL)
+            ).schedule(self.FEL)
 
 
 class event():
@@ -53,7 +54,7 @@ class event():
         self.position = position
         self.direction = direction
     
-    def add_to_FEL(self, FEL):
+    def schedule(self, FEL):
         heappush(FEL, (self.time, self))
 
 
