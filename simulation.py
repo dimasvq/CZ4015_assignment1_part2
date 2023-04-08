@@ -83,11 +83,12 @@ class simulation():
         # Check if car is exiting the highway
         if (event.station < 0) or (event.station > 19):
             event.event_type = 2 # termination event
+            event.station -= 1
             event.time = self.clock
             event.schedule(self.FEL)
         
         else:
-            self.free_channels[event.station] += 1
+            self.free_channels[event.station-event.direction] += 1
             
             if self.free_channels[event.station] == 0:
                 self.dropped += 1
@@ -166,5 +167,5 @@ class event():
 
 
 if __name__ == "__main__":
-    N = 500
+    N = 1000
     simulation().run(N)
