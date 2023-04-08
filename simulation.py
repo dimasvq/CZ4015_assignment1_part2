@@ -3,7 +3,6 @@ from numpy.random import exponential, randint, normal, uniform, choice
 from heapq import heappush, heappop
 
 
-
 class simulation():
 
     def __init__(self):
@@ -63,7 +62,7 @@ class simulation():
             if event.duration < time_in_station:
                 event.event_type = 2 # termination event
                 event.time = self.clock + event.duration
-                event.shedule(self.FEL)
+                event.schedule(self.FEL)
             
             else:
                 event.event_type = 1 # handover event
@@ -71,7 +70,8 @@ class simulation():
                 event.time = self.clock + time_in_station
 
         # Schedule new call initiation event.
-        self.new_call_initiation().schedule(self.FEL)
+        event = self.new_call_initiation()
+        event.schedule(self.FEL)
 
 
     def call_handover_handler(self, event):
@@ -125,8 +125,8 @@ class simulation():
                         
         for n in range(N):
 
-            event = heappop(self.FEL)
-            self.clock += event.time
+            _, event = heappop(self.FEL)
+            self.clock = event.time
 
             if event.event_type == 0:
                 self.call_initiation_handler(event)
@@ -161,5 +161,5 @@ class event():
 
 
 if __name__ == "__main__":
-    N = 100
+    N = 1000
     simulation().run(N)
