@@ -5,6 +5,7 @@ from heapq import heappush, heappop
 
 class simulation():
     def __init__(self):
+
         # Initialise state variables.
         self.clock = 0
         self.FEL = []
@@ -27,8 +28,36 @@ class simulation():
     def call_initiation_event(self, event):
         """Call initiation event handler."""
 
-        # event_type, station, duration, speed, position, direction = event
+        # Update state variables and counters and schedule subsequent events
         self.total_calls += 1
+
+        if self.free_channels[event.station] == 0:
+            self.blocked += 1
+        
+        else:
+            self.free_channels[event.station] -= 1
+
+            # Calculate time remaining in current station
+            if event.direction == 1:
+                time_in_station = 60**2*(2-event.position)/event.speed
+                event.position = 0
+                # In the event of a handover, new cell position will be 0.
+
+            else:
+                time_in_station = 60**2*event.position/event.speed
+                event.position = 2
+                # In the event of a handover, new cell position will be 2.
+            
+            if event.duration < time_in_station:
+                event.event_type = 2 # termination event
+                event.time = self.clock + event.duration
+                event.shedule(self.FEL)
+            
+            else:
+                event.event_type = 1 # handover event
+                event.duration -= time_in_station
+                event.time = self.clock + time_in_station
+
 
 
         # Generate new random variables and schedule next call initiation event
