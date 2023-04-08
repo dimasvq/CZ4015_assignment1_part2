@@ -78,23 +78,19 @@ class simulation():
     def call_handover_handler(self, event):
         """Call handover event handler."""
 
-        event.station += event.direction
-
         # Check if car is exiting the highway
-        if (event.station < 0) or (event.station > 19):
+        if (event.station + event.direction < 0 or 
+            event.station + event.direction > 19):
             event.event_type = 2 # termination event
-            event.station -= 1
             event.time = self.clock
             event.schedule(self.FEL)
         
         else:
-            self.free_channels[event.station-event.direction] += 1
+            self.free_channels[event.station] += 1
+            event.station += event.direction
             
             if self.free_channels[event.station] == 0:
                 self.dropped += 1
-                # event.event_type = 2 # termination event
-                # event.time = self.clock
-                # event.schedule(self.FEL)
             
             else:
                 self.free_channels[event.station] -= 1
@@ -143,9 +139,9 @@ class simulation():
             elif event.event_type == 2:
                 self.call_termination_handler(event)
         
-        print('Blocked calls: {}', [self.blocked])
-        print('Dropped calls: {}', [self.dropped])
-        print('Total calls: {}', [self.total_calls])
+        print(f'Blocked calls: {self.blocked}')
+        print(f'Dropped calls: {self.dropped}')
+        print(f'Total calls: {self.total_calls}')
 
 
 
