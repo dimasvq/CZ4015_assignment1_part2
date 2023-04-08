@@ -68,6 +68,7 @@ class simulation():
                 event.event_type = 1 # handover event
                 event.duration -= time_in_station
                 event.time = self.clock + time_in_station
+                event.schedule(self.FEL)
 
         # Schedule new call initiation event.
         event = self.new_call_initiation()
@@ -89,6 +90,9 @@ class simulation():
         else:
             if self.free_channels[event.station] == 0:
                 self.dropped += 1
+                # event.event_type = 2 # termination event
+                # event.time = self.clock
+                # event.schedule(self.FEL)
             
             else:
                 self.free_channels[event.station] -= 1
@@ -107,7 +111,6 @@ class simulation():
 
     def call_termination_handler(self, event):
         """Call termination event handler."""
-
         self.free_channels[event.station] += 1
     
 
@@ -127,6 +130,7 @@ class simulation():
 
             _, event = heappop(self.FEL)
             self.clock = event.time
+            print(self.free_channels)
 
             if event.event_type == 0:
                 self.call_initiation_handler(event)
@@ -161,5 +165,5 @@ class event():
 
 
 if __name__ == "__main__":
-    N = 1000
+    N = 500
     simulation().run(N)
