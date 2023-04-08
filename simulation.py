@@ -78,7 +78,6 @@ class simulation():
     def call_handover_handler(self, event):
         """Call handover event handler."""
 
-        self.free_channels[event.station] += 1
         event.station += event.direction
 
         # Check if car is exiting the highway
@@ -88,6 +87,8 @@ class simulation():
             event.schedule(self.FEL)
         
         else:
+            self.free_channels[event.station] += 1
+            
             if self.free_channels[event.station] == 0:
                 self.dropped += 1
                 # event.event_type = 2 # termination event
