@@ -40,13 +40,9 @@ class simulation():
             # Calculate time remaining in current station
             if event.direction == 1:
                 time_in_station = 60**2*(2-event.position)/event.speed
-                event.position = 0
-                # In the event of a handover, new cell position will be 0.
 
             else:
                 time_in_station = 60**2*event.position/event.speed
-                event.position = 2
-                # In the event of a handover, new cell position will be 2.
             
             if event.duration < time_in_station:
                 event.event_type = 2 # termination event
@@ -70,6 +66,37 @@ class simulation():
         event(
             time, event_type, station, duration, speed, position, direction
             ).schedule(self.FEL)
+
+
+    def call_handover_event(self, event):
+        """Call handover event handler."""
+
+        self.free_channels[event.station] += 1
+        event.station += event.direction
+
+        # Check if car is exiting the highway
+        if (event.station < 0) or (event.station > 19):
+            event.event_type = 2 # termination event
+            event.time = self.clock
+            event.schedule(self.FEL)
+        
+        else:
+            if self.free_channels[event.station] == 0:
+                self.dropped += 1
+            
+            else:
+                self.free_channels[event.station] -= 1
+                time_in_station = 60**2*2/event.speed
+
+                if event.duration < time_in_station:
+                    event.event_type = 2 # termination event
+                    event.time = self.clock + event.duration
+                    event.schedule(self.FEL)
+                
+                else:
+                    event.time = self.clock + time_in_station
+                    event.duration -= time_in_station
+                    event.schedule(self.FEL) # new handover event
 
 
     def call_termination_event(self, event):
