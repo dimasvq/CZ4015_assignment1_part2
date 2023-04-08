@@ -21,42 +21,42 @@ class simulation():
         self.station_min, self.station_max = 0, 20
         self.duration_mean = self.df['Call duration (sec)'].mean()
         self.speed_mean = self.df['velocity (km/h)'].mean()
-        self.speed_std = self.df['velocity (km/h)'].std(ddof=1)
-    
-    def advance_time(self):
-        """Time advancement mechanism."""
-        self.FEL
-         
-    
+        self.speed_std = self.df['velocity (km/h)'].std(ddof=1)     
+
 
     def call_initiation_event(self, event):
         """Initiation event handler."""
-        event_type, station, duration, speed, position, direction = event
-
-
-
-
-
-
+        # event_type, station, duration, speed, position, direction = event
         self.total_calls += 1
 
-        # Generate random variables for next call initiation event
+
+        # Generate new random variables and schedule next call initiation event
+        event_type = 0
         station = randint(self.station_min, self.station_max)
         duration = exponential(self.duration_mean)
         speed = normal(self.speed_mean, self.speed_std)
         position = uniform(low=0, high=2) # car position within cell
         direction = choice([-1,1])
+        time = self.clock + exponential(self.interarrival_mean)
 
-        # Schedule next call initiation event
-        self.clock += exponential(self.interarrival_mean)
-        self.FEL.append((self.clock, station, duration, speed, position, direction))
-
+        heappush(self.FEL, (time, 0, station, duration, speed, position, direction))
 
 
-        
-
-
-
+class event():
+    def __init__(self, time, event_type, station, duration, speed, position, direction):
+        self.time = time
+        self.event_type = event_type
+        self.station = station
+        self.duration = duration
+        self.speed = speed
+        self.position = position
+        self.direction = direction
+    
+    def add_to_FEL(self, FEL):
+        heappush(
+            FEL, (self.time, self.event_type, self.station, self.duration,
+            self.speed, self.position, self.direction)
+            )    
 
 
 if __name__ == "__main__":
