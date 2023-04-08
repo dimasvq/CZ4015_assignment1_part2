@@ -38,8 +38,9 @@ class simulation():
         position = uniform(low=0, high=2) # car position within cell
         direction = choice([-1,1])
         time = self.clock + exponential(self.interarrival_mean)
-
-        heappush(self.FEL, (time, 0, station, duration, speed, position, direction))
+        event(
+            time, event_type, station, duration, speed, position, direction
+            ).add_to_FEL(self.FEL)
 
 
 class event():
@@ -53,10 +54,7 @@ class event():
         self.direction = direction
     
     def add_to_FEL(self, FEL):
-        heappush(
-            FEL, (self.time, self.event_type, self.station, self.duration,
-            self.speed, self.position, self.direction)
-            )    
+        heappush(FEL, (self.time, self))
 
 
 if __name__ == "__main__":
