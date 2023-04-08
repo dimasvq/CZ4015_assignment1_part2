@@ -12,9 +12,11 @@ class simulation():
         self.free_channels = [10]*20
 
         # Initialise statistical counters.
-        blocked = 0
-        dropped = 0
-        total_calls = 0
+        self.blocked = 0
+        self.dropped = 0
+        self.total_calls = -1
+        # The first call initiation event isn't a real one,
+        # it just initialises the simulation
 
         # Maximum likelihood estimators for probability distributions
         self.df = pd.read_excel('simulation_data.xls')
@@ -22,7 +24,33 @@ class simulation():
         self.station_min, self.station_max = 0, 20
         self.duration_mean = self.df['Call duration (sec)'].mean()
         self.speed_mean = self.df['velocity (km/h)'].mean()
-        self.speed_std = self.df['velocity (km/h)'].std(ddof=1)     
+        self.speed_std = self.df['velocity (km/h)'].std(ddof=1)
+    
+
+    def run(self, N):
+        """Run simulation.
+
+        Parameters
+        ==========
+        N: int
+            Number of iterations to run the simulation.
+        """
+        
+        event(0, 0, 0, 0, 0, 0, 1).schedule(self.FEL)
+                        # time, event_type, station, duration, speed, position, direction
+        for n in range(N):
+
+            event = heappop(self.FEL)
+            self.clock += event.time
+
+            if event.event_type == 0:
+                self.call_initiation_event(event)
+
+            elif event.event_type == 1:
+                self.call_handover_event(event)
+            
+            elif event.event_type == 2:
+                self.call_termination_event(event)
 
 
     def call_initiation_event(self, event):
