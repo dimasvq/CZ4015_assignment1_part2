@@ -1,6 +1,8 @@
 import pandas as pd
+import csv
 from numpy.random import exponential, randint, normal, uniform, choice
 from heapq import heappush, heappop
+from collections import deque
 
 
 class simulation():
@@ -118,17 +120,15 @@ class simulation():
         Parameters
         ==========
         N: int
-            Number of iterations to run the simulation.
+            How many times to run the simulation for 1000 calls.
         """
 
         # Initialise simulation with first call initiation event.
-        self.new_call_initiation().schedule(self.FEL)
-                        
-        for n in range(N):
+        self.new_call_initiation().schedule(self.FEL)              
+        while self.total_calls < N:
 
             _, event = heappop(self.FEL)
             self.clock = event.time
-            print(self.free_channels)
 
             if event.event_type == 0:
                 self.call_initiation_handler(event)
@@ -138,12 +138,14 @@ class simulation():
             
             elif event.event_type == 2:
                 self.call_termination_handler(event)
-        
+
         print(f'Blocked calls: {self.blocked}')
         print(f'Dropped calls: {self.dropped}')
         print(f'Total calls: {self.total_calls}')
 
+        return self.blocked, self.dropped
 
+        
 
 class event():
 
@@ -163,5 +165,17 @@ class event():
 
 
 if __name__ == "__main__":
-    N = 1000
-    simulation().run(N)
+    N = 500
+    blocked_list = deque()
+    dropped_list = deque()
+
+    # N iterations of 2N calls each
+    # e.g. run 1000-call simulation 500 times
+    for n in range(N):
+        blocked, dropped = simulation().run(2*N)
+        blocked_list.append(blocked)
+        dropped_list.append(dropped)
+    
+    pd.DataFrame(
+            {'blocked': blocked_list, 'dropped': dropped_list}
+            ).to_csv('simulation_results.csv')
