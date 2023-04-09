@@ -4,6 +4,7 @@ from heapq import heappush, heappop
 from collections import deque
 
 
+
 class simulation():
 
     def __init__(self):
@@ -118,7 +119,8 @@ class simulation():
         """
 
         # Initialise simulation with first call initiation event.
-        self.new_call_initiation().schedule(self.FEL)              
+        self.new_call_initiation().schedule(self.FEL)
+
         while self.total_calls < N:
 
             _, event = heappop(self.FEL)
@@ -139,7 +141,7 @@ class simulation():
 
         return self.blocked, self.dropped
 
-        
+
 
 class event():
 
