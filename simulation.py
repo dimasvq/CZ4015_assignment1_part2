@@ -54,6 +54,7 @@ class simulation():
 
         if self.free_channels[event.station] == 0:
             self.blocked += 1
+            print('blocked')
         
         else:
             self.free_channels[event.station] -= 1
@@ -88,6 +89,7 @@ class simulation():
             
             if self.free_channels[event.station] == 0:
                 self.dropped += 1
+                print('dropped')
             
             else:
                 self.free_channels[event.station] -= 1
