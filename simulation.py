@@ -44,6 +44,10 @@ class simulation():
     def call_initiation_handler(self, event):
         """Call initiation event handler."""
 
+        # Schedule new call initiation event.
+        self.new_call_initiation().schedule(self.FEL)
+
+
         # Update state variables and counters and schedule subsequent events
         self.total_calls += 1
 
@@ -71,23 +75,14 @@ class simulation():
                 event.time = self.clock + time_in_station
                 event.schedule(self.FEL)
 
-        # Schedule new call initiation event.
-        event = self.new_call_initiation()
-        event.schedule(self.FEL)
-
 
     def call_handover_handler(self, event):
         """Call handover event handler."""
 
-        # Check if car is exiting the highway
-        if (event.station + event.direction < 0 or 
-            event.station + event.direction > 19):
-            event.event_type = 2 # termination event
-            event.time = self.clock
-            event.schedule(self.FEL)
+        self.free_channels[event.station] += 1
         
-        else:
-            self.free_channels[event.station] += 1
+        if (0 <= event.station + event.direction < 20):
+
             event.station += event.direction
             
             if self.free_channels[event.station] == 0:
@@ -164,14 +159,14 @@ class event():
 
 
 if __name__ == "__main__":
-    N = 500
+    N = 1000
     blocked_list = deque()
     dropped_list = deque()
 
     # N iterations of 2N calls each
     # e.g. run 1000-call simulation 500 times
-    for n in range(N):
-        blocked, dropped = simulation().run(2*N)
+    for n in range(N//2):
+        blocked, dropped = simulation().run(N)
         blocked_list.append(blocked)
         dropped_list.append(dropped)
     
