@@ -54,4 +54,4 @@ if __name__ == "__main__":
     
     pd.DataFrame(
             {'blocked': blocked_list, 'dropped': dropped_list}
-            ).to_csv('channel_reservatoin_simulation_results.csv')
+            ).to_csv('channel_reservation_simulation_results.csv')
