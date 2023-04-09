@@ -48,6 +48,34 @@ class warm_simulation(simulation):
         print(f'Total calls: {self.total_calls-warmup_n}')
 
         return self.blocked, self.dropped
+
+
+    def call_handover_handler(self, event):
+        """Call handover event handler."""
+
+        self.free_channels[event.station] += 1
+        
+        if (0 <= event.station + event.direction < 20):
+
+            event.station += event.direction
+            
+            if self.free_channels[event.station] < 2:
+                self.dropped += 1
+                print('dropped')
+            
+            else:
+                self.free_channels[event.station] -= 1
+                time_in_station = 60**2*2/event.speed
+
+                if event.duration < time_in_station:
+                    event.event_type = 2 # termination event
+                    event.time = self.clock + event.duration
+                    event.schedule(self.FEL)
+                
+                else:
+                    event.time = self.clock + time_in_station
+                    event.duration -= time_in_station
+                    event.schedule(self.FEL) # new handover event
     
 
 if __name__ == "__main__":
@@ -55,7 +83,7 @@ if __name__ == "__main__":
     blocked_list = deque()
     dropped_list = deque()
 
-    for n in range(1):
+    for n in range(N):
         blocked, dropped = warm_simulation().run(N)
         blocked_list.append(blocked)
         dropped_list.append(dropped)
